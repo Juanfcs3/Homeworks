@@ -1,25 +1,43 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { checkAuthState, logoutUser } from "./features/auth/authThunks";
+import Header from "./components/Header";
+import PostSection from "./components/PostSection.jsx";
+import Notifications from "./components/Notifications";
+import Login from "./components/Login"; 
 
-function App() {
+const App = () => {
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    dispatch(checkAuthState());
+  }, [dispatch]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="p-4">
+      <Header />
+      {user ? (
+        <>
+          <p>Sesión activa: {user.email}</p>
+          <button
+            onClick={() => dispatch(logoutUser())}
+            className="bg-red-500 text-white px-4 py-2 rounded-md mt-2"
+          >
+            Cerrar sesión
+          </button>
+
+          <PostSection />
+          <Notifications />
+        </>
+      ) : (
+        <>
+          <p className="text-center mt-4">Inicia sesión para continuar</p>
+          <Login /> }
+        </>
+      )}
     </div>
   );
-}
+};
 
 export default App;
